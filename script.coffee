@@ -4,8 +4,8 @@
 
 update = () ->
   now = new Date()
-  start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 9, 0)
-  end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 16, 0)
+  start = new Date now.getFullYear(), now.getMonth(), now.getDate(), 8, 0
+  end = new Date now.getFullYear(), now.getMonth(), now.getDate(), 16, 0
 
   bar = $('#progress-bar')
   title = $('title')
@@ -15,12 +15,12 @@ update = () ->
 
   newWidth = bar.parent().innerWidth() * ratio
 
-  title.html(Math.floor(ratio * 1000)/10 + '%')
-  bar.css({'width': newWidth + 'px'})
+  title.html Math.floor(ratio * 10000)/100 + '%'
+  bar.css {'width': newWidth + 'px'}
 
 onReady = () ->
   update()
-  window.setInterval(update, 1000)
+  window.setInterval update, 1000
 
-$(document).ready(onReady)
+$(document).ready onReady
 
