@@ -4,8 +4,8 @@
 
 update = () ->
   now = new Date()
-  start = new Date now.getFullYear(), now.getMonth(), now.getDate(), 8, 0
-  end = new Date now.getFullYear(), now.getMonth(), now.getDate(), 16, 0
+  start = new Date now.getFullYear(), now.getMonth(), now.getDate(), 9, 0
+  end = new Date now.getFullYear(), now.getMonth(), now.getDate(), 17, 0
 
   bar = $('#progress-bar')
   title = $('title')
