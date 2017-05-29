@@ -929,11 +929,20 @@ var init = function () {
     "Taki z niego muzykant jak z koziego ogona klarnet, a z koziej dupy",
     "Wyżej dupy nie przeskoczysz (podskoczysz)."]
 
+  var audio = new Audio('hey.mp3');
 
   var kopiujRandomowe = function () {
     var randomowe = przyslowia[Math.floor(Math.random() * przyslowia.length)];
     $("#copytext").text(randomowe).select();
     document.execCommand('copy');
+    audio.play();
+
+    $('#hej').css("visibility", "visible");
+
+    window.setTimeout(function () {
+      $('#hej').css("visibility", "hidden");
+    }, 800);
+
   }
 
   $("#button").click(kopiujRandomowe)
