@@ -929,19 +929,30 @@ var init = function () {
     "Taki z niego muzykant jak z koziego ogona klarnet, a z koziej dupy",
     "Wyżej dupy nie przeskoczysz (podskoczysz)."]
 
-  var audio = new Audio('hey.mp3');
+  var files = ["dajcie.mp3", "dzyn.mp3",
+    "kurczaki.mp3", "ooooo.mp3", "rara.mp3", "rubliu.mp3", "szymano.mp3"];
+
+  var audios = files.map(function (path) {return new Audio(path)});
+
+  var randomElement = function (items) {
+    return items[Math.floor(Math.random() * items.length)];
+  };
 
   var kopiujRandomowe = function () {
-    var randomowe = przyslowia[Math.floor(Math.random() * przyslowia.length)];
+    var randomowe = randomElement(przyslowia);
+    var audio = randomElement(audios);
+
     $("#copytext").text(randomowe).select();
     document.execCommand('copy');
+
     audio.play();
 
-    $('#hej').css("visibility", "visible");
-
-    window.setTimeout(function () {
+    audio.addEventListener("ended", function(){
+      audio.currentTime = 0;
       $('#hej').css("visibility", "hidden");
-    }, 800);
+    });
+
+    $('#hej').css("visibility", "visible");
 
   }
 
