@@ -7,15 +7,13 @@
     <style>
 
       .button {
-        margin-left:auto;
-        margin-right:auto;
-        margin-top: 100px;
+        display: inline-block;
+        margin-left: 10px;
         width:150px;
         height:50px;
         cursor: pointer;
         border: 3px solid black;
         text-align: center;
-        vertical-align: center;
         padding-top: 25px;
         font-family: sans-serif;
         font-weight: bold;
@@ -23,19 +21,17 @@
         background-color: white;
       }
 
-
       #hej {
-        left: 50%;
         position: fixed;
         width: 500px;
-        margin-left: -250px;
+        margin-right: auto;
         visibility: hidden;
       }
 
       .textdiv {
         position: fixed;
-        margin-top: 1px;
-        margin-left: 1px;
+        margin-top: auto;
+        margin-left: auto;
       }
 
       .copytext {
@@ -49,18 +45,20 @@
 
   <body>
 
-    <div class="textdiv">
-      <textarea class="copytext" id="copytext"></textarea>
+    <div>
+
+      <div class="textdiv">
+        <textarea class="copytext" id="copytext"></textarea>
+      </div>
+
+      <img src="hej.jpg" id="hej"></img>
+
+      <div class="buttons">
+        <div class="button" id="przyslowie">Losuj głupotę</div>
+        <div class="button" id="cytat">Losuj cytat</div>
+      </div>
+
     </div>
-
-    <img src="hej.jpg" id="hej"></img>
-
-    <div style="height:100%;width:100%;">
-      <div class="button" id="button">Losuj głupotę</div>
-
-    </div>
-
-
 
     <script
       src="https://code.jquery.com/jquery-3.2.1.min.js"
