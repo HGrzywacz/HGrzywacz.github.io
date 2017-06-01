@@ -1221,16 +1221,48 @@ var init = function () {
     return items[Math.floor(Math.random() * items.length)];
   };
 
+  var bzyk = $('#hej');
+
+  var animate = function (durationS) {
+    var duration = parseInt(durationS * 1000);
+
+    var w = $(document).width();
+
+    var startTime = (new Date()).getTime();
+    var endTime = startTime + duration;
+
+    bzyk.css("visibility", "visible");
+
+    var singleFrame = function () {
+      var currentTime = (new Date()).getTime();
+
+      var progress = (currentTime - startTime) / duration;
+
+      bzyk.css('left', ((w + 1000) * progress - 500));
+
+      if (progress > 1) {
+        bzyk.css("visibility", "hidden").css('left', -500);
+        return;
+      };
+
+      window.requestAnimationFrame(singleFrame);
+    };
+
+    singleFrame();
+
+  };
+
   var playAudio = function () {
     var audio = randomElement(audios);
     audio.play();
 
+    animate(audio.duration);
+
     audio.addEventListener("ended", function(){
       audio.currentTime = 0;
-      $('#hej').css("visibility", "hidden");
+      bzyk.css("visibility", "hidden");
     });
 
-    $('#hej').css("visibility", "visible");
   };
 
   var kopiujRandomowe = function (rzeczy) {
