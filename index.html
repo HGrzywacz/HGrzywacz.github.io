@@ -21,12 +21,17 @@
         background-color: white;
       }
 
-      #hej {
+      #bzyk {
         position: fixed;
         width: 500px;
         left: -500px;
-        visibility: visible;
+        visibility: hidden;
       }
+
+      #bzyk.move {
+        transform: translate(1000px);
+      }
+
 
       .textdiv {
         position: fixed;
@@ -51,11 +56,12 @@
         <textarea class="copytext" id="copytext"></textarea>
       </div>
 
-      <img src="hej.jpg" id="hej"></img>
+      <img src="hej.jpg" id="bzyk"></img>
 
       <div class="buttons">
         <div class="button" id="przyslowie">Losuj głupotę</div>
         <div class="button" id="cytat">Losuj cytat</div>
+        <div class="button" id="pazdzioch">Losuj Paździocha</div>
       </div>
 
     </div>

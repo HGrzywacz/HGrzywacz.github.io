@@ -1212,8 +1212,64 @@ var init = function () {
     "Zaraz, kurde! Ide, kurde! Noc jest, kurde!"
   ]
 
+  var pazdzioch = [
+    "Chodzą słuchy, że potrafi pani rewelacyjnie zakisić ogóra…",
+    "Chodzi mi o sodomię homoseksualną.",
+    "Co by tu jeszcze spieprzyć?",
+    "Czego?!",
+    "Czego pan chcesz i kiedy pan oddasz?",
+    "Czego się drzesz, dziadu jeden, do jasnej cholery?!",
+    "Dzisiaj gnój, jutro rżysko, a pojutrze San Francisco!",
+    "Dzisiaj tenis, jutro penis!",
+    "Helena! Gul mi skoczył!",
+    "Helena! Mam zawał!",
+    "Helena! Nie drzyj się!",
+    "Ile? Dwa razy tyle co pan myślisz!",
+    "Ja jestem takim samym murzynem jak pan, tylko że białym!",
+    "Ja się z panem na jednym gównie nie ślizgałem, panie Ferdku-pierdku.",
+    "Jezu! Idzie! To pewnie… po mnie, z banku, kurwa!",
+    "Jeszcze wielu rzeczy o mnie pan nie wiesz.",
+    "Kurwa, że też wcześniej na to nie wpadłem…",
+    "Meteopalant jeden…",
+    "Możesz zgarnąć dużo kasy, wysyłając esemasy",
+    "Mówi to panu coś?",
+    "Murzyna tanio sprzedam!",
+    "Niech pan spojrzy, panie Ferdku, samochód mi myje, gnój jeden.",
+    "No fakt, mamy wody po kolana, a nawet się naniosło trochę błota!",
+    "Od Techno można z nudów zdechnąć.",
+    "Odpoczywać to będę w grobie.",
+    "Pan jeszcze wielu rzeczy o mnie nie wie, panie Ferdku.",
+    "Pan się naśmiewasz z moich dziedzicznych obstrukcji!",
+    "Panie Ferdku, to ja, Marian Paździoch, syn Józefa!",
+    "Panie Ferdku, z tego można zrobić niezłą kasę!",
+    "Panie nie bądź pan dupa! Psa kiełbasą zanęcisz, a podkop od dołu zrobisz!",
+    "Panie szofer gazu, panie szofer gazu, bo pół litra jest w garażu!",
+    "Paszoł won!",
+    "Portier powinien mieć oczy dookoła głowy. A nawet jedno w dupie.",
+    "Posłuchaj pan, panie Edzio-pedzio i pan, panie Ferdku-wypierdku.",
+    "Paszoł won alkoholiku jeden, bo po policję zadzwonię!",
+    "Panu się zawsze chce, wtedy kiedy mnie!",
+    "Sam pan jesteś horror erotyczny!",
+    "Siekiera, motyka, baba goła, Marian Paździoch to pierdoła.",
+    "Siekiera, motyka bum cyk cyk, Marian Paździoch stary pryk.",
+    "Siekiera, motyka, smętna bajka, u Paździocha miękka fajka.",
+    " Siekiera, motyka małpi wuj, Marian Paździoch to jest chuj!",
+    "To co się lampisz, karwasz twarz, cwelu jeden z drugim?!",
+    "To jest moja własna, publiczna toaleta!",
+    "To powiadasz pan, że nakrył się kołdrą na głowie?",
+    "To kwestia mojej ambicjonalności!",
+    "W takim razie ja złożę wniosek do Trybunału Konstytucyjnego Praw Człowieka.",
+    "W tym kraju to świnia świnię pogania!",
+    "Widzę, że nie pałasz pan zbytnim entuzjazmem do podjęcia nowej pracy.",
+    "Wszystkim organizmom biologicznym na świecie, poza tobą, Helena, chodzi wyłącznie o jedno: o seks.",
+    "Zesrajcie się, mendy!",
+    "Zatkało ruskie kakało?"]
+
+
   var files = ["dajcie.mp3", "dzyn.mp3",
-    "kurczaki.mp3", "ooooo.mp3", "rara.mp3", "rubliu.mp3", "szymano.mp3"];
+    "kurczaki.mp3", "ooooo.mp3", "rara.mp3", "rubliu.mp3", "szymano.mp3",
+    "glupota.mp3", "haha.mp3", "kartofli.mp3", "keczup.mp3", "ptaki.mp3",
+    "zaby.mp3", "zalsonku.mp3"];
 
   var audios = files.map(function (path) {return new Audio(path)});
 
@@ -1221,34 +1277,21 @@ var init = function () {
     return items[Math.floor(Math.random() * items.length)];
   };
 
-  var bzyk = $('#hej');
+  var bzyk = $('#bzyk');
 
-  var animate = function (durationS) {
-    var duration = parseInt(durationS * 1000);
+  var animate = function (duration) {
 
     var w = $(document).width();
 
-    var startTime = (new Date()).getTime();
-    var endTime = startTime + duration;
+    bzyk.css('visibility', 'visible');
+    bzyk.css('transition', 'transform ' + duration + 's ease-in-out');
+    bzyk.css('transform', 'translate(' + (w + 1000) + 'px)');
 
-    bzyk.css("visibility", "visible");
-
-    var singleFrame = function () {
-      var currentTime = (new Date()).getTime();
-
-      var progress = (currentTime - startTime) / duration;
-
-      bzyk.css('left', ((w + 1000) * progress - 500));
-
-      if (progress > 1) {
-        bzyk.css("visibility", "hidden").css('left', -500);
-        return;
-      };
-
-      window.requestAnimationFrame(singleFrame);
-    };
-
-    singleFrame();
+    window.setTimeout(function () {
+      bzyk.css('transition', '');
+      bzyk.css('transform',  '');
+      bzyk.css('visibility', 'hidden');
+    }, (duration * 1000));
 
   };
 
@@ -1260,7 +1303,6 @@ var init = function () {
 
     audio.addEventListener("ended", function(){
       audio.currentTime = 0;
-      bzyk.css("visibility", "hidden");
     });
 
   };
@@ -1276,9 +1318,11 @@ var init = function () {
 
   var kopiujCytat = function () {kopiujRandomowe(cytaty)};
   var kopiujPrzyslowie = function () {kopiujRandomowe(przyslowia)};
+  var kopiujPazdiocha = function () {kopiujRandomowe(pazdzioch)};
 
   $("#przyslowie").click(kopiujPrzyslowie);
   $("#cytat").click(kopiujCytat);
+  $("#pazdzioch").click(kopiujPazdiocha);
 
 };
 
