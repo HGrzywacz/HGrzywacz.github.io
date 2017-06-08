@@ -50,17 +50,31 @@ var init = function () {
     playAudio();
   };
 
+  var kopiujZwrotke = function (rzeczy) {
+    var czteryWersy =
+      randomElement(rzeczy) + "\n" +
+      randomElement(rzeczy) + "\n" +
+      randomElement(rzeczy) + "\n" +
+      randomElement(rzeczy)
+
+    $("#copytext").text(czteryWersy).select();
+    document.execCommand('copy');
+
+    playAudio();
+  };
+
   var kopiujCytat = function () {kopiujRandomowe(cytaty)};
   var kopiujPrzyslowie = function () {kopiujRandomowe(przyslowia)};
   var kopiujPazdiocha = function () {kopiujRandomowe(pazdzioch)};
   var kopiujMaksyme = function () {kopiujRandomowe(maksymy)};
+  var kopiujKrawczyka = function () {kopiujZwrotke(krawczyk)};
 
   $("#przyslowie").click(kopiujPrzyslowie);
   $("#cytat").click(kopiujCytat);
   $("#pazdzioch").click(kopiujPazdiocha);
   $("#maksyma").click(kopiujMaksyme);
+  $("#zwrotka").click(kopiujKrawczyka)
 
 };
-
 
 $(document).ready(init)
