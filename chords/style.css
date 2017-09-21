@@ -1,0 +1,283 @@
+/* https://material.io/color/#!/?view.left=0&view.right=0&primary.color=546E7A&secondary.color=00838F */
+
+:root {
+  --primary: #546e7a;
+  --primary-light: #819ca9;
+  --primary-dark: #29434e;
+  --text-on-primary: #ffffff;
+  --secondary: #00838f;
+  --secondary-light: #4fb3bf;
+  --secondary-dark: #005662;
+  --text-on-secondary: #ffffff;
+  --background: #e1e2e1;
+  --background-light: #f5F5f6;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1.1em;
+  margin: 0;
+  background-color: var(--background-light);
+}
+
+.fullwidth {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.notification-bar {
+  height: 15px;
+  background-color: var(--primary-dark);
+}
+
+.header {
+  color: var(--text-on-primary);
+  background-color: var(--primary);
+  padding: 10px;
+}
+
+.controls {
+  display: flex;
+}
+
+.selector {
+  height: 2em;
+  width: 8em;
+  text-align: center;
+  line-height: 2em;
+  user-select: none
+}
+
+#start {
+  cursor: pointer;
+}
+
+.selector .separator {
+  margin: 0px 5px;
+}
+
+.language-selector {
+  width: 8em;
+  font-weight: normal;
+  cursor: pointer
+}
+
+.handness-selector {
+  width: 8em;
+  font-weight: normal;
+  cursor: pointer;
+  margin-right: 1.5em;
+}
+
+.instrument-selector {
+  width: 8em;
+  font-weight: normal;
+  cursor: pointer
+}
+
+.inactive {
+  color: #cccccc;
+}
+
+.selector > .active {
+  font-weight: 900;
+}
+
+.score-container {
+  width: 90%;
+  height: 2em;
+  line-height: 2em;
+  text-align: right;
+  font-size: 1em;
+}
+
+.topmargin {
+  display: flex;
+  padding: 20px;
+  height: 20px;
+}
+
+.notename {
+  margin-right: 30px;
+  padding-left: 15px;
+  line-height: 40px;
+}
+
+.text1 {
+  padding-left: 1em;
+}
+
+.text2 {
+  padding-left: 1em;
+}
+
+.text-note {
+  font-weight: bold;
+  font-size: 1.3em;
+}
+
+.text-description {
+  font-weight: normal;
+  font-size: 0.8em;
+}
+
+.text-string {
+  font-weight: bold;
+}
+
+#notenotation {
+  width: 40px;
+}
+
+.container {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-right: 3%;
+  padding-left: 3%;
+  height: 100px;
+}
+
+.fretboard-table {
+  width: 100%;
+  position: relative;
+  border-collapse: collapse;
+  border-right: 4px solid black;
+  border-left: 4px solid black;
+}
+
+.fretboard-row {
+  height: 30px;
+  border: 0;
+  border-bottom: 1px solid grey;
+}
+
+.fretboard-row:first-child {
+  border-top: 1px solid grey;
+}
+
+.fretboard-cell {
+  box-sizing: border-box;
+  height: 30px;
+  line-height: 30px;
+  text-align: center;
+
+  width: 5px;
+
+  cursor: pointer;
+
+  border-right: 2px solid black;
+  border-left: 2px solid black;
+  border-bottom: 0;
+  border-top: 0;
+}
+
+.fretboard-cell.fretboard-open-string {
+  border-right: 4px solid black;
+  border-left: 4px solid black;
+}
+
+.active.fretboard-cell.red {
+  background-color: rgba(255, 0, 0, 0.4);
+  transition: background-color 0.3s;
+}
+
+.active.fretboard-cell.red:hover {
+  background-color: rgba(255, 0, 0, 0.8);
+}
+
+.active.fretboard-cell.yellow {
+  background-color: rgba(255, 219, 8, 0.4);
+  transition: background-color 0.3s;
+}
+
+.active.fretboard-cell.yellow:hover {
+  background-color: rgba(255, 219, 8, 0.8);
+}
+
+.active.fretboard-cell.blue {
+  background-color: rgba(71, 63, 255, 0.4);
+  transition: background-color 0.3s;
+}
+
+.active.fretboard-cell.blue:hover {
+  background-color: rgba(71, 63, 255, 0.8);
+}
+
+.active.fretboard-cell.orange {
+  background-color: rgba(255, 138, 19, 0.4);
+  transition: background-color 0.3s;
+}
+
+.active.fretboard-cell.orange:hover {
+  background-color: rgba(255, 138, 19, 0.8);
+}
+
+.dot {
+  position: absolute;
+  border-radius: 100%;
+  background-color: grey;
+  width: 20px;
+  height: 20px;
+  top: 50px;
+}
+
+.table-container {
+  padding-bottom: 20px;
+}
+
+.table td.intervals {
+  text-align: left;
+}
+
+.table.scale {
+  border-collapse: collapse;
+}
+
+table.main {
+  border-collapse: collapse;
+}
+
+.table.scale td {
+  width: 22px;
+  text-align: center;
+  padding: 5px 5px;
+  border: 1px solid black;
+  cursor: pointer;
+}
+
+td.chordname {
+  padding-right: 20px;
+  padding-left: 5px;
+}
+
+td.chromaticlabel {
+  padding-left: 5px;
+}
+
+.table.scale td.active {
+  font-weight: bold;
+  background-color: rgba(71, 63, 255, 0.2);
+}
+
+.table.scale td.tonic {
+  font-weight: bold;
+  background-color: rgba(71, 63, 255, 0.5) !important;
+}
+
+.select {
+  background-color: transparent;
+  border: 0;
+  font-size: 1em;
+}
+
+.select:focus {
+  outline: transparent;
+}
+
+option {
+  padding: 0;
+}

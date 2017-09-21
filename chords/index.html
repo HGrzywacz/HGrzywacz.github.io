@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" type="text/css" href="notes.css">
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Roboto:100,400,700,900&amp;subset=latin-ext"
+      rel="stylesheet">
+
+  </head>
+
+  <body>
+
+    <div class="notification-bar fullwidth"></div>
+
+    <!-- nagłówek w którym są przyciski do wyboru języka oznaczeń, trybu gry, punktacja -->
+    <div class="header fullwidth">
+
+      <!-- zmiana języka, instrumentu, restart -->
+      <div class="controls fullwidth">
+
+        <div class="language-selector selector">
+
+          <span id="pl" class="language active">
+            Chords
+          </span>
+
+          <span class="separator">|</span>
+
+          <span id="en" class="language inactive">
+            Major
+          </span>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- margines pomiędzy nagłówkiem a gryfem -->
+
+    <div class="topmargin">
+
+      <div id="notename">
+        <!-- <span class="notename text note">E</span> -->
+        <!-- <span class="notename text description">na strunie</span> -->
+        <!-- <span class="notename text string">E</span> -->
+      </div>
+
+      <!-- <div id="notenotation" class="staff"> -->
+      <!--   <div class="quarter note e4"></div> -->
+      <!-- </div> -->
+
+      <!-- <div class="staff" style="width: 1000px;"> -->
+      <!--   <div class="half note e4"></div> -->
+      <!--   <div class="quarter note f4"></div> -->
+      <!--   <div class="quarter note g4"></div> -->
+      <!--   <div class="bar"></div> -->
+      <!--   <div class="quarter note a5"></div> -->
+      <!--   <div class="half note b5"></div> -->
+      <!--   <div class="quarter note down c5"></div> -->
+      <!--   <div class="double bar"></div> -->
+      <!--   <div class="quarter note c5"></div> -->
+      <!--   <div class="half note a5"></div> -->
+      <!--   <div class="quarter note e5"></div> -->
+      <!--   <div class="bar"></div> -->
+      <!--   <div class="quarter note c5"></div> -->
+      <!--   <div class="quarter note e5"></div> -->
+      <!--   <div class="quarter note f5"></div> -->
+      <!--   <div class="quarter note g4"></div> -->
+      <!--   <div class="bar"></div> -->
+      <!--   <div class="half note d5"></div> -->
+      <!--   <div class="half note down a5"></div> -->
+      <!--   <div class="bar"></div> -->
+      <!--   <div class="whole note d4"></div> -->
+      <!--   <div class="bar"></div> -->
+      <!--   <div class="bar end"></div> -->
+      <!-- </div> -->
+
+    </div>
+
+    <!-- gryf -->
+    <div class="container fullwidth">
+
+      <table class="main">
+
+        <tr class="table-container">
+
+          <td>
+            <select id="sharps" class="select" name="sharps">
+              <option value="sharps" selected>♯</option>
+              <option value="flats">♭</option>
+            </select>
+          </td>
+
+          <td>
+            <table class="table scale allnotes">
+              <tr>
+              </tr>
+            </table>
+          </td>
+
+        </tr>
+
+        <tr class="table-container">
+
+          <td class="chromaticlabel">
+            chromatic
+          </td>
+
+          <td>
+            <table class="table scale chromatic">
+              <tr>
+              </tr>
+            </table>
+          </td>
+
+        </tr>
+
+        <tr class="table-container">
+
+          <td>
+            <select id="chosenscale" class="select" name="chosenscale">
+              <option value="major" selected>major</option>
+              <option value="minor">minor</option>
+              <option value="majorpentatonic">major pentatonic</option>
+              <option value="minorpentatonic">minor pentatonic</option>
+              <option value="blues">blues</option>
+            </select>
+          </td>
+
+          <td>
+            <table class="table scale chosenscale">
+              <tr>
+              </tr>
+            </table>
+          </td>
+
+        </tr>
+
+      </table>
+
+    </div>
+
+  </body>
+
+  <script
+             src="https://code.jquery.com/jquery-3.2.1.min.js"
+             integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+             crossorigin="anonymous"></script>
+
+  <script
+             src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"
+             integrity="sha256-obZACiHd7gkOk9iIL/pimWMTJ4W/pBsKu+oZnSeBIek="
+             crossorigin="anonymous"></script>
+
+  <script src="./chords.js"></script>
+  <script src="./app.js"></script>
+
+</html>
