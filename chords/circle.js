@@ -61,15 +61,6 @@ const circleApp = ((id) => {
     ctx.restore();
   };
 
-  const makeAddChord = (ctx, notes, origin, angle, putNotes) => (tonic, chord, chordSounds) => {
-    console.log(tonic);
-    console.log(chord);
-    console.log(chordSounds);
-    clearCanvas(ctx);
-    putNotes();
-    addLabels(ctx, notes, origin, angle, chord, chordSounds);
-  };
-
   const calibrate = (ctx, origin, angle) => {
     // linie do kalibrowania przesunięcia w fillTextSperical tak żeby literki
     // były na środku podanych współrzędnych
@@ -105,7 +96,7 @@ const circleApp = ((id) => {
   const clearCircle = (ctx, origin) => {
     ctx.save();
     ctx.beginPath();
-    ctx.arc(origin.x, origin.y, 660, 0, (2 * Math.PI), true);
+    ctx.arc(origin.x, origin.y, 590, 0, (2 * Math.PI), true);
     ctx.clip();
     ctx.clearRect(0, 0, width, height);
     ctx.restore();
@@ -117,18 +108,27 @@ const circleApp = ((id) => {
     ctx.restore();
   };
 
-  const changeChord = (notes, ctx, origin, angle, previousChord, nextChord) => () => {
+  var currentAngles = [0, 0, 0, 0];
 
-    var startIndices = _.indices(notes, previousChord);
-    var endIndices = _.indices(notes, nextChord);
+  const changeChord = (ctx, notes, origin, angle, chord, chordSounds) => () => {
 
-    var startAngles = _.map(startIndices, (i) => (i * angle));
-    var endAngles = _.map(endIndices, (i) => (i * angle));
+    if (_.size(currentAngles) === 3) {
+      currentAngles = _.concat(currentAngles, [_.last(currentAngles)]);
+    }
 
-    var s = startAngles;
-    var e = endAngles;
+    var endIndices = _.indices(notes, chordSounds);
 
-    var linesRho = 600;
+    var startAngles = currentAngles.sort();
+
+    var endAngles = _.map(endIndices, (i) => (i * angle)).sort();
+
+    if (_.size(endAngles) === 3) {
+      endAngles = _.concat(endAngles, [_.last(endAngles)]);
+    }
+
+    var differences = _.zipWith(endAngles, startAngles, ((e, s) => {return e - s}));
+
+    var linesRho = 540;
     var duration = 1000; // ms
     var startTime = new Date().getTime();
 
@@ -149,12 +149,19 @@ const circleApp = ((id) => {
 
       if (ratio < 0) return;
 
+      var angles = _.zipWith(startAngles, differences, ((s, d) => {return s + (d * ratio)}));
+
+      currentAngles = angles.sort();
+
       ctx.save();
       ctx.beginPath();
-      sphericalLineTo(ctx, origin, linesRho, (s[0] + (e[0] - s[0]) * ratio));
-      sphericalLineTo(ctx, origin, linesRho, (s[1] + (e[1] - s[1]) * ratio));
-      sphericalLineTo(ctx, origin, linesRho, (s[2] + (e[2] - s[2]) * ratio));
-      sphericalLineTo(ctx, origin, linesRho, (s[0] + (e[0] - s[0]) * ratio));
+
+      _.each(angles, (angle) => {
+        sphericalLineTo(ctx, origin, linesRho, angle);
+      });
+
+      sphericalLineTo(ctx, origin, linesRho, angles[0]);
+
       ctx.stroke();
       ctx.restore();
 
@@ -162,6 +169,13 @@ const circleApp = ((id) => {
     };
 
     step();
+  };
+
+  const makeAddChord = (ctx, notes, origin, angle, putNotes) => (tonic, chord, chordSounds) => {
+    clearCanvas(ctx);
+    putNotes();
+    addLabels(ctx, notes, origin, angle, chord, chordSounds);
+    changeChord(ctx, notes, origin, angle, chord, chordSounds)();
   };
 
   const makePutNotes = (ctx, type) => () => {
@@ -208,14 +222,12 @@ const circleApp = ((id) => {
 
   return () => {
     // putLabels(ctx, origin, angle);
-    var previousChord = ['C', 'E', 'B♭'];
-    var nextChord = ['C', 'E', 'F'];
 
     putNotes = makePutNotes(ctx, type);
 
     var [notes, angle] = putNotes();
 
-    $(canvasElement).click(changeChord(notes, ctx, origin, angle, previousChord, nextChord))
+    // $(canvasElement).click(changeChord(notes, ctx, origin, angle, previousChord, nextChord))
 
     return {
       addChord: makeAddChord(ctx, notes, origin, angle, putNotes)
