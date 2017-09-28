@@ -1,58 +1,8 @@
-_.mixin({
-  fmap: (f, obj) => _.map(obj, f),
-  bypass: (obj, f) => {
-    f(obj);
-    return obj;
-  },
-  log: (obj, label) => {
-    console.log(label, obj);
-    return obj;
-  },
-  dropUntil: (arr, p) => {
-    var index = _.findIndex(arr, p);
-    return _.drop(arr, index);
-  },
-  zipWith: (a1, a2, f) => {
-    return _.first(_.map(_.zip(a1, a2), (pair) => {
-      return f(pair[0], pair[1]);
-    }), _.min([_.size(a1), _.size(a2)]))
-  },
-  concat: (...args) => {
-    return _.chain(args).compact().toArray().flatten(true).value();
-  }
-});
-
-const chordsApp = (() => {
+const chordsApp = (circles) => {
 
   const setTitle = (title) => $(document).prop('title', title);
 
   const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
-
-  const [c, cis, d, dis, e, f, fis, g, gis, a, ais, h] =
-    _.fmap(Symbol, ['c', 'cis', 'd', 'dis', 'e', 'f', 'fis', 'g', 'gis', 'a', 'ais', 'h']);
-
-  const [b] = [ais];
-  const sound = Symbol('sound');
-  const pl = Symbol('pl');
-  const en = Symbol('en');
-  const enflat = Symbol('enflat');
-
-  const sounds = [
-    {[sound]: c, [pl]: 'c', [en]: 'C', [enflat]: 'C'},
-    {[sound]: cis, [pl]: 'cis', [en]: 'C♯', [enflat]: 'D♭'},
-    {[sound]: d, [pl]: 'd', [en]: 'D', [enflat]: 'D'},
-    {[sound]: dis, [pl]: 'dis', [en]: 'D♯', [enflat]: 'E♭'},
-    {[sound]: e, [pl]: 'e', [en]: 'E', [enflat]: 'E'},
-    {[sound]: f, [pl]: 'f', [en]: 'F', [enflat]: 'F'},
-    {[sound]: fis, [pl]: 'fis', [en]: 'F♯', [enflat]: 'G♭'},
-    {[sound]: g, [pl]: 'g', [en]: 'G', [enflat]: 'G'},
-    {[sound]: gis, [pl]: 'gis', [en]: 'G♯', [enflat]: 'A♭'},
-    {[sound]: a, [pl]: 'a', [en]: 'A', [enflat]: 'A'},
-    {[sound]: ais, [pl]: 'ais', [en]: 'A♯', [enflat]: 'B♭'},
-    {[sound]: h, [pl]: 'h', [en]: 'B', [enflat]: 'B'}
-  ];
-
-  const soundsArr = (() => _.concat(sounds, sounds, sounds))();
 
   const [unison, majorThird, minorThird] =
     _.fmap(Symbol, ['unison', 'majorThird', 'minorThird']);
@@ -98,31 +48,31 @@ const chordsApp = (() => {
   const chords = {
     [major]: {id: 'majortriad', name: "major",
       intervals: [unison, majorThird, minorThird],
-      text1: 'M3 + P5', text2: 'major + minor'},
+      text1: ['M3', 'P5'], text2: 'major + minor'},
 
     [minor]: {id: 'minortriad', name: "minor",
       intervals: [unison, minorThird, majorThird],
-      text1: 'm3 + P5', text2: 'minor + major'},
+      text1: ['m3', 'P5'], text2: 'minor + major'},
 
     [diminished]: {id: 'diminishedtriad', name: "diminished",
       intervals: [unison, minorThird, minorThird],
-      text1: 'm3 + d5', text2: 'minor + minor'},
+      text1: ['m3', 'm5'], text2: 'minor + minor'},
 
     [augumented]: {id: 'augumentedtriad', name: "augumented",
       intervals: [unison, majorThird, majorThird],
-      text1: 'M3 + m3', text2: 'major + major'},
+      text1: ['M3', 'm3'], text2: 'major + major'},
 
     [seven]: {id: 'seven', name: "7",
       intervals: [unison, majorThird, minorThird, minorThird],
-      text1: 'M3 + P5 + m7', text2: 'major + minor + minor'},
+      text1: ['M3', 'P5', 'm7'], text2: 'major + minor + minor'},
 
     [majorSeven]: {id: 'majorSeven', name: "maj7",
       intervals: [unison, majorThird, minorThird, majorThird],
-      text1: 'M3 + P5 + M7', text2: 'major + minor + major'},
+      text1: ['M3', 'P5', 'M7'], text2: 'major + minor + major'},
 
     [minorSeven]: {id: 'minorSeven', name: "min7",
       intervals: [unison, minorThird, majorThird, minorThird],
-      text1: 'm3 + P5 + M6', text2: 'minor + major + minor'}
+      text1: ['m3', 'P5', 'M6'], text2: 'minor + major + minor'}
   };
 
   const makeChord = (tonic, chord) => {
@@ -130,11 +80,54 @@ const chordsApp = (() => {
     return byIntervals(rest, chord.intervals);
   };
 
+  const addChordToCircles = (circles, tonic, chord, sounds) => {
+    _.each(circles, (circle) => {
+      circle.addChord(tonic, chord, sounds);
+    });
+  };
+
+  var selectedChord = {tonic: null, chord: null};
+
+  const selectChord = (tonic, chord) => {
+    var sounds = makeChord(tonic, chord);
+    var zipped = _.take(_.zip(sounds, colors), _.size(sounds));
+
+    _.each(zipped, ((pair) => {
+      $('.' + pair[0][pl]).addClass('active').addClass(pair[1]);
+    }));
+
+    addChordToCircles(circles, tonic, chord, sounds);
+  };
+
+  const unselect = () => {
+    var actives = $('.active');
+    actives.removeClass('active');
+    _.each(colors, ((color) => actives.removeClass(color)));
+  };
+
+  const makeSelectChordName = (tonic, chord) => (event) => {
+    if ((selectedChord.tonic === tonic) && (selectedChord.chord === chord)) {
+      selectedChord = {tonic: null, chord: null};
+      $('.chordname.bold').removeClass('bold');
+    } else {
+      unselect();
+      $('.chordname.bold').removeClass('bold');
+      selectedChord = {tonic: tonic, chord: chord};
+      selectChord(tonic, chord);
+      $(event.target).addClass('bold');
+    }
+  };
+
   const printChord = (tonic, chord) => {
 
     var row = $('<tr></tr>').addClass('chord');
 
-    row.append($('<td>' + chord.name + '</td>').addClass('chordname'));
+    var chordname = $('<td>' + chord.name + '</td>')
+      .addClass('chordname')
+      .addClass(chord.name)
+      .click(makeSelectChordName(tonic, chord));
+
+    row.append(chordname);
 
     chordSounds = makeChord(tonic, chord);
 
@@ -146,7 +139,7 @@ const chordsApp = (() => {
 
     row.append(soundsCell);
 
-    row.append($('<td>' + chord.text1 + '</td>').addClass('text1'));
+    row.append($('<td>' + chord.text1.join(' + ') + '</td>').addClass('text1'));
     row.append($('<td>' + chord.text2 + '</td>').addClass('text2'));
 
     row.hover(makeOnHover(tonic, chord), outHover);
@@ -213,22 +206,32 @@ const chordsApp = (() => {
   };
 
   const onClick = (event) => {
+    $('.chordname.bold').removeClass('bold');
+
     var newTonic = _.find(sounds, ((sound) => (sound[pl] === $(event.target).attr('note'))));
 
     clear()
     printTables(newTonic);
+
+    // selectedChord = _.extend({}, selectedChord, {tonic: null});;
+
+    if (selectedChord.chord !== null) {
+      selectChord(newTonic, selectedChord.chord);
+      var target = {target: $('.chordname.' + selectedChord.chord.name)};
+      makeSelectChordName(newTonic, selectedChord.chord)(target);
+    };
   };
 
-  const makeOnHover = (tonic, chord) => (event) => {
-    var sounds = makeChord(tonic, chord);
+  var colors = ['blue', 'red', 'yellow', 'orange'];
 
-    _.each(sounds, ((sound) => {
-      $('.' + sound[pl]).addClass('active');
-    }));
+  const makeOnHover = (tonic, chord) => (event) => {
+    if (selectedChord.tonic !== null) return;
+    selectChord(tonic, chord);
   };
 
   const outHover = () => {
-    $('.active').removeClass('active');
+    if (selectedChord.tonic !== null) return;
+    unselect();
   };
 
   const printTables = (tonic) => {
@@ -255,4 +258,4 @@ const chordsApp = (() => {
     printTables(tonic);
   };
 
-})();
+};
