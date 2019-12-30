@@ -1,0 +1,17 @@
+.tmp
+.sass-cache
+*.py
+*.pyc
+*.zip
+*.tar
+*.tar.gz
+*.orig
+*.swp
+*sh
+*jpg
+*png
+*ttf
+.settings
+*.bash
+*.txt
+*~

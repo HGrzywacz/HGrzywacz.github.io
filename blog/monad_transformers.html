@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="pl">
+
+
+	<head>
+
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+		<title>Haskell po polsku</title>
+		<meta name="author" content="Hubert Grzywacz">
+		<meta name="description" content="Haskell po polsku">
+
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+		<link rel="stylesheet" href="/files/base.css">
+		<link rel="stylesheet" href="/files/skeleton.css">
+		<link rel="stylesheet" href="/files/typography.css">
+		<link rel="stylesheet" href="/files/layout.css">
+		<link rel="stylesheet" href="/files/syntax.css">
+		<link rel="stylesheet" href="/files/custom.css">
+		<link href="/files/fonts.css" rel="stylesheet">
+
+	</head>
+
+	<body>
+
+
+		<div class="container">
+			<div class="three columns sidebar">
+				<nav>
+					<div>
+						<div class="main-title">Haskell po polsku</div>
+						<div class="main-subtitle" id="name">Hubert Grzywacz</div>
+					</div>
+					<ul>
+						<li><a href="/index.html">Blog</a></li>
+						<li><a href="/contact.html">Kontakt</a></li>
+						<li><a href="https://github.com/hgrzywacz">Github</a></li>
+						<li><a href="https://gitlab.com/hgrzywacz">Gitlab</a></li>
+
+					</ul>
+				</nav>
+				&nbsp;
+			</div>
+
+			<div class="twelve columns offset-by-one content">
+
+				<h1 id="stos-monad">Stos monad</h1>
+
+				<p>Potrzebne importy:</p>
+				<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">module</span> <span class="dt">RWMonad</span> <span class="kw">where</span>
+
+<span class="kw">import </span><span class="dt">Control.Monad.Trans</span>
+<span class="kw">import </span><span class="dt">Control.Monad.Reader</span>
+<span class="kw">import </span><span class="dt">Control.Monad.Writer</span></code></pre></div>
+					<h2 id="instancje-które-są-derived">Instancje które są derived</h2>
+					<p>Za pomocą rozszerzenia:</p>
+					<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE GeneralizedNewtypeDeriving #-}</span></code></pre></div>
+						<p>Haskell jest w stanie sam wykminić instancje takich klas jak - <code>MonadReader String</code> - <code>MonadWriter [String]</code> - <code>MonadIO</code> - ...</p>
+						<p>przykładowo stos który składa się z &amp;larr; Stos &amp;larr; <code>Reader</code> &amp;larr; <code>Writer</code> &amp;larr; <code>IO</code></p>
+						<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">RWMonad</span> a <span class="fu">=</span> <span class="dt">RWMonad</span> {<span class="ot">unRW ::</span> <span class="dt">ReaderT</span> <span class="dt">String</span> (<span class="dt">WriterT</span> [<span class="dt">String</span>] <span class="dt">IO</span>) a}</code></pre></div>
+							<p>może mieć automatycznie wydedukowane instancje:</p>
+							<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">RWMonad</span> a <span class="fu">=</span> <span class="dt">RWMonad</span> {<span class="ot">unRW ::</span> <span class="dt">ReaderT</span> <span class="dt">String</span> (<span class="dt">WriterT</span> [<span class="dt">String</span>] <span class="dt">IO</span>) a}
+		<span class="kw">deriving</span> (<span class="dt">Functor</span>, <span class="dt">Applicative</span>, <span class="dt">Monad</span>, <span class="dt">MonadReader</span> <span class="dt">String</span>, <span class="dt">MonadWriter</span> [<span class="dt">String</span>], <span class="dt">MonadIO</span>)</code></pre></div>
+								<p>wtedy można używać funkcji <code>tell</code>, <code>ask</code> itp.</p>
+								<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">RWMonad</span> <span class="dt">String</span>
+f <span class="fu">=</span> <span class="kw">do</span>
+		config <span class="ot">&lt;-</span> ask
+		t <span class="ot">&lt;-</span> liftIO getTime
+		tell [mappend t config]
+		return t
+
+<span class="ot">g ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> <span class="dt">String</span>
+g tx <span class="fu">=</span> <span class="kw">do</span>
+		t <span class="ot">&lt;-</span> liftIO getTime
+		tell [tx <span class="fu">++</span> <span class="st">&quot; &quot;</span> <span class="fu">++</span> t]
+		return t</code></pre></div>
+									<p>użycie:</p>
+									<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">runRWMonad ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> a <span class="ot">-&gt;</span> <span class="dt">IO</span> (a, [<span class="dt">String</span>])
+runRWMonad config rw <span class="fu">=</span> runWriterT (runReaderT (unRW rw) config)
+
+λ<span class="fu">&gt;</span> runRWMonad <span class="st">&quot;config&quot;</span> (f <span class="fu">&gt;&gt;=</span> g)
+(<span class="st">&quot;47102.075373746s&quot;</span>,[<span class="st">&quot;47102.075357415sconfig&quot;</span>,<span class="st">&quot;47102.075357415s 47102.075373746s&quot;</span>])</code></pre></div>
+										<h2 id="instancje-derived-bez-wewnętrznego-fielda">Instancje derived bez wewnętrznego &quot;fielda&quot;</h2>
+										<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">RWMonad</span> a <span class="fu">=</span> <span class="dt">RWMonad</span> (<span class="dt">ReaderT</span> <span class="dt">String</span> (<span class="dt">WriterT</span> [<span class="dt">String</span>] <span class="dt">IO</span>) a)
+		<span class="kw">deriving</span> (<span class="dt">Functor</span>, <span class="dt">Applicative</span>, <span class="dt">Monad</span>, <span class="dt">MonadReader</span> <span class="dt">String</span>, <span class="dt">MonadWriter</span> [<span class="dt">String</span>], <span class="dt">MonadIO</span>)
+
+<span class="ot">runRWMonad ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> a <span class="ot">-&gt;</span> <span class="dt">IO</span> (a, [<span class="dt">String</span>])
+runRWMonad config (<span class="dt">RWMonad</span> rw) <span class="fu">=</span> runWriterT (runReaderT rw config)</code></pre></div>
+											<h2 id="instancje-napisane-ręcznie">Instancje napisane ręcznie</h2>
+											<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">newtype</span> <span class="dt">RWMonad</span> a <span class="fu">=</span> <span class="dt">RWMonad</span> {<span class="ot">unRW ::</span> <span class="dt">WriterT</span> [<span class="dt">String</span>] (<span class="dt">ReaderT</span> <span class="dt">String</span> <span class="dt">IO</span>) a}
+
+<span class="ot">runRWMonad ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> a <span class="ot">-&gt;</span> <span class="dt">IO</span> (a, [<span class="dt">String</span>])
+runRWMonad config rw <span class="fu">=</span> runReaderT (runWriterT (unRW rw)) config</code></pre></div>
+												<h3 id="instancja-functor">Instancja <code>Functor</code>:</h3>
+												<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Functor</span> <span class="dt">RWMonad</span> <span class="kw">where</span>
+<span class="ot">    fmap ::</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> a <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> b
+		fmap f rw <span class="fu">=</span> <span class="dt">RWMonad</span> { unRW <span class="fu">=</span> fmap f (unRW rw) }</code></pre></div>
+													<h3 id="instancja-applicative">Instancja <code>Applicative</code>:</h3>
+													<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Applicative</span> <span class="dt">RWMonad</span> <span class="kw">where</span>
+<span class="ot">    pure ::</span> a <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> a
+		pure x <span class="fu">=</span> <span class="dt">RWMonad</span> { unRW <span class="fu">=</span> pure x}
+<span class="ot">    (&lt;*&gt;) ::</span> <span class="dt">RWMonad</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> a <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> b
+		(<span class="fu">&lt;*&gt;</span>) frw rw <span class="fu">=</span> <span class="dt">RWMonad</span> { unRW <span class="fu">=</span> unRW frw <span class="fu">&lt;*&gt;</span> unRW rw }</code></pre></div>
+														<h3 id="instancja-monad">Instancja <code>Monad</code>:</h3>
+														<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">Monad</span> <span class="dt">RWMonad</span> <span class="kw">where</span>
+<span class="ot">    (&gt;&gt;=) ::</span> <span class="dt">RWMonad</span> a <span class="ot">-&gt;</span> (a <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> b) <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> b
+		(<span class="fu">&gt;&gt;=</span>) rw f <span class="fu">=</span> <span class="dt">RWMonad</span> { unRW <span class="fu">=</span> unRW rw <span class="fu">&gt;&gt;=</span> unRW <span class="fu">.</span> f }</code></pre></div>
+															<h2 id="instancje-klas-transformatorów">Instancje klas transformatorów</h2>
+															<p>Koniecznie rozszerzenia języka:</p>
+															<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">{-# LANGUAGE FlexibleInstances #-}</span>
+<span class="ot">{-# LANGUAGE MultiParamTypeClasses #-}</span></code></pre></div>
+																<h3 id="instancja-monadio">Instancja <code>MonadIO</code></h3>
+																<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">MonadIO</span> <span class="dt">RWMonad</span> <span class="kw">where</span>
+<span class="ot">    liftIO ::</span> <span class="dt">IO</span> a <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> a
+		liftIO <span class="fu">=</span> <span class="dt">RWMonad</span> <span class="fu">.</span> liftIO</code></pre></div>
+																	<h3 id="instancja-monadwriter">Instancja <code>MonadWriter</code></h3>
+																	<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">MonadWriter</span> [<span class="dt">String</span>] <span class="dt">RWMonad</span> <span class="kw">where</span>
+<span class="ot">    tell ::</span> [<span class="dt">String</span>] <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> ()
+		tell <span class="fu">=</span> <span class="dt">RWMonad</span> <span class="fu">.</span> tell
+<span class="ot">    listen ::</span> <span class="dt">RWMonad</span> a <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> (a, [<span class="dt">String</span>])
+		listen <span class="fu">=</span> <span class="dt">RWMonad</span> <span class="fu">.</span> listen <span class="fu">.</span> unRW
+<span class="ot">    pass ::</span> <span class="dt">RWMonad</span> (a, [<span class="dt">String</span>] <span class="ot">-&gt;</span> [<span class="dt">String</span>]) <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> a
+		pass <span class="fu">=</span> <span class="dt">RWMonad</span> <span class="fu">.</span> pass <span class="fu">.</span> unRW</code></pre></div>
+																		<h3 id="instancja-monadreader">Instancja <code>MonadReader</code></h3>
+																		<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="kw">instance</span> <span class="dt">MonadReader</span> <span class="dt">String</span> <span class="dt">RWMonad</span> <span class="kw">where</span>
+<span class="ot">    ask ::</span> <span class="dt">RWMonad</span> <span class="dt">String</span>
+		ask <span class="fu">=</span> <span class="dt">RWMonad</span> <span class="fu">$</span> lift ask
+<span class="ot">    local ::</span> (<span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">String</span>) <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> a <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> a
+		local f rw <span class="fu">=</span> <span class="dt">RWMonad</span> <span class="fu">$</span> local f (unRW rw)</code></pre></div>
+																			<h2 id="użycie-instancji-napisanych-ręcznie">Użycie instancji napisanych ręcznie</h2>
+																			<div class="sourceCode"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span class="ot">f ::</span> <span class="dt">RWMonad</span> <span class="dt">String</span>
+f <span class="fu">=</span> <span class="dt">RWMonad</span> <span class="fu">$</span> <span class="kw">do</span>
+		config <span class="ot">&lt;-</span> ask
+		tell [<span class="st">&quot;log frw&quot;</span> <span class="fu">++</span> config]
+		return <span class="st">&quot;monad1&quot;</span>
+
+<span class="ot">g ::</span> <span class="dt">String</span> <span class="ot">-&gt;</span> <span class="dt">RWMonad</span> <span class="dt">String</span>
+g str <span class="fu">=</span> <span class="dt">RWMonad</span> <span class="fu">$</span> <span class="kw">do</span>
+		config <span class="ot">&lt;-</span> ask
+		tell [<span class="st">&quot;log frw&quot;</span> <span class="fu">++</span> config <span class="fu">++</span> str]
+		t <span class="ot">&lt;-</span> liftIO getTime
+		tell [t]
+		return t
+
+λ<span class="fu">&gt;</span> runRWMonad <span class="st">&quot;config&quot;</span> (f <span class="fu">&gt;&gt;=</span> g)
+(<span class="st">&quot;48114.955198127s&quot;</span>,[<span class="st">&quot;log frwconfig&quot;</span>,<span class="st">&quot;log frwconfigmonad1&quot;</span>,<span class="st">&quot;48114.955198127s&quot;</span>])</code></pre></div>
+
+
+
+			</div>
+		</div>
+
+		<!-- JS
+		================================================== -->
+		<script src="./files/jquery-1.7.1.min.js"></script>
+
+		<!-- End Document
+		================================================== -->
+
+	</body>
+
+</html>

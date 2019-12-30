@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="UTF-8">
+
+    <style>
+
+      .button {
+        display: inline-block;
+        margin-left: 10px;
+        margin-bottom: 15px;
+        width:200px;
+        height:50px;
+        cursor: pointer;
+        border: 3px solid black;
+        text-align: center;
+        padding-top: 25px;
+        font-family: sans-serif;
+        font-weight: bold;
+        user-select: none;
+        background-color: white;
+      }
+
+      #bzyk {
+        position: fixed;
+        width: 500px;
+        left: -500px;
+        visibility: hidden;
+      }
+
+      .textdiv {
+        position: fixed;
+        margin-top: auto;
+        margin-left: auto;
+      }
+
+      .copytext {
+        width: 0;
+        height: 0;
+      }
+
+    </style>
+
+  </head>
+
+  <body>
+
+    <div>
+
+      <div class="textdiv">
+        <textarea class="copytext" id="copytext"></textarea>
+      </div>
+
+      <img src="hej.jpg" id="bzyk"></img>
+
+      <div class="buttons">
+        <div class="button" id="przyslowie">Losowa głupota</div>
+        <div class="button" id="maksyma">Случайная глупость</div>
+      </div>
+
+      <div class="buttons">
+        <div class="button" id="cytat">Losowy cytat</div>
+        <div class="button" id="pazdzioch">Losowy Paździoch</div>
+      </div>
+
+      <div class="buttons">
+        <div class="button" id="zwrotka">Losowa zwrotka</div>
+      </div>
+
+    </div>
+
+    <script
+      src="https://code.jquery.com/jquery-3.2.1.min.js"
+      integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+      crossorigin="anonymous"></script>
+
+    <script src="./data.js"></script>
+    <script src="./krawczyk.js"></script>
+    <script src="./script.js"></script>
+
+  </body>
+
+</html>
